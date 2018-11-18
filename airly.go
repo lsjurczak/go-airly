@@ -20,6 +20,15 @@ type Client struct {
 	token   string
 }
 
+// NewClient creates a Client that will use the specified access token for its API requests.
+func NewClient(token string) Client {
+	return Client{
+		http:    http.DefaultClient,
+		baseURL: defaultBaseURL,
+		token:   token,
+	}
+}
+
 // Error represents an error returned by the Airly API.
 type Error struct {
 	ErrorCode string `json:"errorCode"`
@@ -35,15 +44,6 @@ type Error struct {
 
 func (e Error) Error() string {
 	return e.Message
-}
-
-// NewClient creates a Client that will use the specified access token for its API requests.
-func NewClient(token string) Client {
-	return Client{
-		http:    http.DefaultClient,
-		baseURL: defaultBaseURL,
-		token:   token,
-	}
 }
 
 func (c *Client) decodeError(resp *http.Response) error {
@@ -104,45 +104,4 @@ func (c *Client) get(path string, params url.Values, result interface{}) error {
 	}
 
 	return nil
-}
-
-// Installation is an entity that binds together a sensor and its location where it's installed.
-type Installation []struct {
-	ID       int `json:"id"`
-	Location struct {
-		Latitude  float64 `json:"latitude"`
-		Longitude float64 `json:"longitude"`
-	} `json:"location"`
-	Address struct {
-		Country         string `json:"country"`
-		City            string `json:"city"`
-		Street          string `json:"street"`
-		Number          string `json:"number"`
-		DisplayAddress1 string `json:"displayAddress1"`
-		DisplayAddress2 string `json:"displayAddress2"`
-	} `json:"address"`
-	Elevation float64 `json:"elevation"`
-	Airly     bool    `json:"airly"`
-	Sponsor   struct {
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		Logo        string `json:"logo"`
-		Link        string `json:"link"`
-	} `json:"sponsor"`
-}
-
-// GetNearestInstallation returns list of installations which are closest to a given point, sorted by distance to that point.
-func (c *Client) GetNearestInstallation(lat, lon float32) (*Installation, error) {
-	urlValues := url.Values{
-		"lat": []string{fmt.Sprintf("%f", lat)},
-		"lng": []string{fmt.Sprintf("%f", lon)},
-	}
-	var installation Installation
-
-	err := c.get("installations/nearest", urlValues, &installation)
-	if err != nil {
-		return nil, err
-	}
-
-	return &installation, nil
 }
