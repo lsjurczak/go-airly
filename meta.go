@@ -1,16 +1,19 @@
 package airly
 
+// Level represents values for
+type Level struct {
+	MinValue    float64 `json:"minValue"`
+	MaxValue    float64 `json:"maxValue"`
+	Values      string  `json:"values"`
+	Level       string  `json:"level"`
+	Description string  `json:"description"`
+	Color       string  `json:"color"`
+}
+
 // IndexType represents an air quality type.
 type IndexType struct {
-	Name   string `json:"name"`
-	Levels []struct {
-		MinValue    float64 `json:"minValue"`
-		MaxValue    float64 `json:"maxValue"`
-		Values      string  `json:"values"`
-		Level       string  `json:"level"`
-		Description string  `json:"description"`
-		Color       string  `json:"color"`
-	} `json:"levels"`
+	Name   string  `json:"name"`
+	Levels []Level `json:"levels"`
 }
 
 // MeasurementType represent a measurement type.
@@ -20,7 +23,8 @@ type MeasurementType struct {
 	Unit  string `json:"unit"`
 }
 
-// GetIndexTypes returns a list of all the index types supported in the API along with lists of levels defined per each index type.
+// GetIndexTypes returns a list of all the index types supported in the API
+// along with lists of levels defined per each index type.
 func (c *Client) GetIndexTypes() (*[]IndexType, error) {
 	var indexTypes []IndexType
 
@@ -28,11 +32,11 @@ func (c *Client) GetIndexTypes() (*[]IndexType, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &indexTypes, nil
 }
 
-// GetMeasurementTypes returns list of all the measurement types supported in the API along with their names and units.
+// GetMeasurementTypes returns list of all the measurement types supported
+// in the API along with their names and units.
 func (c *Client) GetMeasurementTypes() (*[]MeasurementType, error) {
 	var measurementTypes []MeasurementType
 

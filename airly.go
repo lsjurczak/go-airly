@@ -10,7 +10,11 @@ import (
 )
 
 var (
-	defaultBaseURL = &url.URL{Host: "airapi.airly.eu", Scheme: "https", Path: "/v2/"}
+	defaultBaseURL = &url.URL{
+		Host:   "airapi.airly.eu",
+		Scheme: "https",
+		Path:   "/v2/",
+	}
 )
 
 // Client is a client for working with the Airly API.
@@ -20,7 +24,8 @@ type Client struct {
 	token   string
 }
 
-// NewClient creates a Client that will use the specified access token for its API requests.
+// NewClient creates a Client that will use the specified access token
+// for its API requests.
 func NewClient(token string) Client {
 	return Client{
 		http:    http.DefaultClient,
@@ -29,17 +34,23 @@ func NewClient(token string) Client {
 	}
 }
 
+// Violation represents an error which requested value is invalid.
+type Violation struct {
+	Parameter     string `json:"parameter"`
+	Message       string `json:"message"`
+	RejectedValue int    `json:"rejectedValue"`
+}
+
+// Details represents list of violations when interacting with the Airly API.
+type Details struct {
+	Violations []Violation `json:"violations"`
+}
+
 // Error represents an error returned by the Airly API.
 type Error struct {
-	ErrorCode string `json:"errorCode"`
-	Message   string `json:"message"`
-	Details   struct {
-		Violations []struct {
-			Parameter     string `json:"parameter"`
-			Message       string `json:"message"`
-			RejectedValue int    `json:"rejectedValue"`
-		} `json:"violations"`
-	} `json:"details"`
+	ErrorCode string  `json:"errorCode"`
+	Message   string  `json:"message"`
+	Details   Details `json:"details"`
 }
 
 func (e Error) Error() string {
@@ -53,7 +64,10 @@ func (c *Client) decodeError(resp *http.Response) error {
 	}
 
 	if len(responseBody) == 0 {
-		return fmt.Errorf("airly: HTTP %d %s (body empty)", resp.StatusCode, http.StatusText(resp.StatusCode))
+		return fmt.Errorf(
+			"airly: HTTP %d %s (body empty)",
+			resp.StatusCode,
+			http.StatusText(resp.StatusCode))
 	}
 
 	buf := bytes.NewBuffer(responseBody)
@@ -61,12 +75,17 @@ func (c *Client) decodeError(resp *http.Response) error {
 	var e Error
 	err = json.NewDecoder(buf).Decode(&e)
 	if err != nil {
-		return fmt.Errorf("airly: couldn't decode error: HTTP %d %s", len(responseBody), responseBody)
+		return fmt.Errorf(
+			"airly: couldn't decode error: HTTP %d %s",
+			len(responseBody),
+			responseBody)
 	}
 
 	if e.Message == "" {
-		e.Message = fmt.Sprintf("airly: unexpected HTTP %d %s (empty error)",
-			resp.StatusCode, http.StatusText(resp.StatusCode))
+		e.Message = fmt.Sprintf(
+			"airly: unexpected HTTP %d %s (empty error)",
+			resp.StatusCode,
+			http.StatusText(resp.StatusCode))
 	}
 
 	return e
@@ -77,7 +96,12 @@ func (c *Client) get(path string, params url.Values, result interface{}) error {
 		params = url.Values{}
 	}
 
-	u := c.baseURL.ResolveReference(&url.URL{Path: path, RawQuery: params.Encode()})
+	u := c.baseURL.ResolveReference(
+		&url.URL{
+			Path:     path,
+			RawQuery: params.Encode(),
+		},
+	)
 
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
