@@ -18,17 +18,23 @@ var (
 	}
 )
 
+// HTTPDoer is a single-method interface for performing HTTP requests.
+type HTTPDoer interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 // Client is a client for working with the Airly API.
 type Client struct {
-	http  *http.Client
+	doer HTTPDoer
+
 	token string
 }
 
 // NewClient creates a Client that will use the specified access token
 // for its API requests.
-func NewClient(token string) Client {
-	return Client{
-		http:  http.DefaultClient,
+func NewClient(token string) *Client {
+	return &Client{
+		doer:  http.DefaultClient,
 		token: token,
 	}
 }
@@ -96,9 +102,9 @@ func (c *Client) get(path string, params url.Values, result interface{}) error {
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 
-	resp, err := c.http.Do(req)
+	resp, err := c.doer.Do(req)
 	if err != nil {
-		return errors.Wrap(err, "http.Do")
+		return errors.Wrap(err, "doer.Do")
 	}
 	defer resp.Body.Close()
 
