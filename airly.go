@@ -1,16 +1,17 @@
 package airly
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	"github.com/pkg/errors"
 )
 
 var (
-	defaultBaseURL = &url.URL{
+	// DefaultBaseURL is an URL for interacting with the Airly API.
+	DefaultBaseURL = &url.URL{
 		Host:   "airapi.airly.eu",
 		Scheme: "https",
 		Path:   "/v2/",
@@ -19,18 +20,16 @@ var (
 
 // Client is a client for working with the Airly API.
 type Client struct {
-	http    *http.Client
-	baseURL *url.URL
-	token   string
+	http  *http.Client
+	token string
 }
 
 // NewClient creates a Client that will use the specified access token
 // for its API requests.
 func NewClient(token string) Client {
 	return Client{
-		http:    http.DefaultClient,
-		baseURL: defaultBaseURL,
-		token:   token,
+		http:  http.DefaultClient,
+		token: token,
 	}
 }
 
@@ -58,34 +57,19 @@ func (e Error) Error() string {
 }
 
 func (c *Client) decodeError(resp *http.Response) error {
-	responseBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	if len(responseBody) == 0 {
-		return fmt.Errorf(
-			"airly: HTTP %d %s (body empty)",
-			resp.StatusCode,
-			http.StatusText(resp.StatusCode))
-	}
-
-	buf := bytes.NewBuffer(responseBody)
-
 	var e Error
-	err = json.NewDecoder(buf).Decode(&e)
+
+	err := json.NewDecoder(resp.Body).Decode(&e)
 	if err != nil {
-		return fmt.Errorf(
-			"airly: couldn't decode error: HTTP %d %s",
-			len(responseBody),
-			responseBody)
+		return errors.Wrap(err, "decode response")
 	}
 
 	if e.Message == "" {
 		e.Message = fmt.Sprintf(
 			"airly: unexpected HTTP %d %s (empty error)",
 			resp.StatusCode,
-			http.StatusText(resp.StatusCode))
+			http.StatusText(resp.StatusCode),
+		)
 	}
 
 	return e
@@ -96,16 +80,16 @@ func (c *Client) get(path string, params url.Values, result interface{}) error {
 		params = url.Values{}
 	}
 
-	u := c.baseURL.ResolveReference(
+	u := DefaultBaseURL.ResolveReference(
 		&url.URL{
 			Path:     path,
 			RawQuery: params.Encode(),
 		},
 	)
 
-	req, err := http.NewRequest("GET", u.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "http.NewRequest")
 	}
 
 	req.Header.Add("apikey", c.token)
@@ -114,7 +98,7 @@ func (c *Client) get(path string, params url.Values, result interface{}) error {
 
 	resp, err := c.http.Do(req)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "http.Do")
 	}
 	defer resp.Body.Close()
 
@@ -124,7 +108,7 @@ func (c *Client) get(path string, params url.Values, result interface{}) error {
 
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "decode response")
 	}
 
 	return nil
