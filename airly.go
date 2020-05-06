@@ -2,21 +2,16 @@ package airly
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
-
-	"github.com/pkg/errors"
+	"time"
 )
 
-var (
-	// DefaultBaseURL is an URL for interacting with the Airly API.
-	DefaultBaseURL = &url.URL{
-		Host:   "airapi.airly.eu",
-		Scheme: "https",
-		Path:   "/v2/",
-	}
-)
+var httpClient = &http.Client{
+	Timeout: 10 * time.Second,
+}
 
 // HTTPDoer is a single-method interface for performing HTTP requests.
 type HTTPDoer interface {
@@ -25,28 +20,59 @@ type HTTPDoer interface {
 
 // Client is a client for working with the Airly API.
 type Client struct {
-	doer HTTPDoer
+	// HTTP client used to communicate with the API.
+	client HTTPDoer
 
-	token string
+	apiKey   string
+	baseURL  *url.URL
+	language string
+
+	Installation *InstallationService
+	Measurement  *MeasurementService
+	Meta         *MetaService
 }
 
-// NewClient creates a Client that will use the specified access token
+// NewClient creates a Client that will use the specified access apiKey
 // for its API requests.
-func NewClient(token string) *Client {
-	return &Client{
-		doer:  http.DefaultClient,
-		token: token,
+func NewClient(client HTTPDoer, apiKey string) (*Client, error) {
+	if client == nil {
+		client = httpClient
 	}
+
+	if apiKey == "" {
+		return nil, errors.New("missing api key")
+	}
+
+	c := &Client{
+		client: client,
+		apiKey: apiKey,
+		baseURL: &url.URL{
+			Host:   "airapi.airly.eu",
+			Scheme: "https",
+			Path:   "/v2/",
+		},
+	}
+
+	c.Installation = &InstallationService{client: c}
+	c.Measurement = &MeasurementService{client: c}
+	c.Meta = &MetaService{client: c}
+
+	return c, nil
 }
 
-// Violation represents an error which requested value is invalid.
+func (c *Client) Language(lang string) *Client {
+	c.language = lang
+	return c
+}
+
+// Violation represents an error that the requested value is invalid.
 type Violation struct {
 	Parameter     string `json:"parameter"`
 	Message       string `json:"message"`
 	RejectedValue int    `json:"rejectedValue"`
 }
 
-// Details represents list of violations when interacting with the Airly API.
+// Details represent a list of violations when interacting with the Airly API.
 type Details struct {
 	Violations []Violation `json:"violations"`
 }
@@ -67,7 +93,7 @@ func (c *Client) decodeError(resp *http.Response) error {
 
 	err := json.NewDecoder(resp.Body).Decode(&e)
 	if err != nil {
-		return errors.Wrap(err, "decode response")
+		return fmt.Errorf("decode response: %w", err)
 	}
 
 	if e.Message == "" {
@@ -82,11 +108,7 @@ func (c *Client) decodeError(resp *http.Response) error {
 }
 
 func (c *Client) get(path string, params url.Values, result interface{}) error {
-	if params == nil {
-		params = url.Values{}
-	}
-
-	u := DefaultBaseURL.ResolveReference(
+	u := c.baseURL.ResolveReference(
 		&url.URL{
 			Path:     path,
 			RawQuery: params.Encode(),
@@ -95,16 +117,20 @@ func (c *Client) get(path string, params url.Values, result interface{}) error {
 
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
-		return errors.Wrap(err, "http.NewRequest")
+		return fmt.Errorf("http.NewRequest: %w", err)
 	}
 
-	req.Header.Add("apikey", c.token)
+	req.Header.Add("apiKey", c.apiKey)
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 
-	resp, err := c.doer.Do(req)
+	if c.language != "" {
+		req.Header.Add("Accept-Language", c.language)
+	}
+
+	resp, err := c.client.Do(req)
 	if err != nil {
-		return errors.Wrap(err, "doer.Do")
+		return fmt.Errorf("doer.Do: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -114,7 +140,7 @@ func (c *Client) get(path string, params url.Values, result interface{}) error {
 
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
-		return errors.Wrap(err, "decode response")
+		return fmt.Errorf("decode response: %w", err)
 	}
 
 	return nil

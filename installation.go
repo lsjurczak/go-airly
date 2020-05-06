@@ -5,13 +5,18 @@ import (
 	"net/url"
 )
 
-// Location represents geographical coordinates where the sensor was installed.
+// https://developer.airly.eu/docs#endpoints.installations
+type InstallationService struct {
+	client *Client
+}
+
+// Location represents the geographical coordinates of sensor installation.
 type Location struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 }
 
-// Address represents detailed address where the sensor was installed.
+// Address represents the detailed address of sensor installation.
 type Address struct {
 	Country         string `json:"country"`
 	City            string `json:"city"`
@@ -21,7 +26,7 @@ type Address struct {
 	DisplayAddress2 string `json:"displayAddress2"`
 }
 
-// Sponsor represents sponsor who bought the sensor.
+// Sponsor represents the sponsor who bought the sensor.
 type Sponsor struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -29,8 +34,7 @@ type Sponsor struct {
 	Link        string `json:"link"`
 }
 
-// Installation is an entity that binds together information about
-// sensor installation.
+// Installation is an entity that binds information about sensor installation.
 type Installation struct {
 	ID        int      `json:"id"`
 	Location  Location `json:"location"`
@@ -40,39 +44,47 @@ type Installation struct {
 	Sponsor   Sponsor  `json:"sponsor"`
 }
 
-// GetInstallation returns single installation metadata,
-// given by installationID.
-func (c *Client) GetInstallation(installationID int64) (*Installation, error) {
+// ByID returns single installation metadata given by installationID.
+// https://developer.airly.eu/docs#endpoints.installations.getbyid
+func (s *InstallationService) ByID(id int64) (Installation, error) {
 	var installation Installation
-
-	err := c.get(
-		fmt.Sprintf("installations/%d", installationID),
-		nil,
-		&installation,
-	)
+	u := fmt.Sprintf("installations/%d", id)
+	err := s.client.get(u, nil, &installation)
 	if err != nil {
-		return nil, err
+		return Installation{}, err
 	}
-
-	return &installation, nil
+	return installation, nil
 }
 
-// GetNearestInstallation returns list of installations which are closest
-// to a given point, sorted by distance to that point.
-func (c *Client) GetNearestInstallation(lat, lng float64) (*[]Installation, error) {
-	var installations []Installation
+type nearestInstallationOpts struct {
+	opts url.Values
+}
 
-	err := c.get(
-		"installations/nearest",
-		url.Values{
-			"lat": []string{fmt.Sprintf("%f", lat)},
-			"lng": []string{fmt.Sprintf("%f", lng)},
-		},
-		&installations,
-	)
+func NewNearestInstallationOpts(lat, lng float64) *nearestInstallationOpts {
+	q := &nearestInstallationOpts{opts: map[string][]string{}}
+	q.opts.Set("lat", fmt.Sprint(lat))
+	q.opts.Set("lng", fmt.Sprint(lng))
+	return q
+}
+
+func (q *nearestInstallationOpts) MaxDistance(km float64) *nearestInstallationOpts {
+	q.opts.Set("maxDistanceKM", fmt.Sprint(km))
+	return q
+}
+
+func (q *nearestInstallationOpts) MaxResults(limit float64) *nearestInstallationOpts {
+	q.opts.Set("maxResults", fmt.Sprint(limit))
+	return q
+}
+
+// Nearest returns list of installations closest to a given point,
+// sorted by distance to that point.
+// https://developer.airly.eu/docs#endpoints.installations.nearest
+func (s *InstallationService) Nearest(opts *nearestInstallationOpts) ([]Installation, error) {
+	var installations []Installation
+	err := s.client.get("installations/nearest", opts.opts, &installations)
 	if err != nil {
 		return nil, err
 	}
-
-	return &installations, nil
+	return installations, nil
 }

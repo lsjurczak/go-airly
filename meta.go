@@ -1,6 +1,11 @@
 package airly
 
-// Level represents values for
+// https://developer.airly.eu/docs#endpoints.meta
+type MetaService struct {
+	client *Client
+}
+
+// Level represents a definition of a single index level.
 type Level struct {
 	MinValue    float64 `json:"minValue"`
 	MaxValue    float64 `json:"maxValue"`
@@ -16,34 +21,34 @@ type IndexType struct {
 	Levels []Level `json:"levels"`
 }
 
-// MeasurementType represent a measurement type.
+// MeasurementType represents a measurement type.
 type MeasurementType struct {
 	Name  string `json:"name"`
 	Label string `json:"label"`
 	Unit  string `json:"unit"`
 }
 
-// GetIndexTypes returns a list of all the index types supported in the API
-// along with lists of levels defined per each index type.
-func (c *Client) GetIndexTypes() (*[]IndexType, error) {
+// Indexes return a list of all the index types supported in the API along
+// with lists of levels defined per each index type.
+// https://developer.airly.eu/docs#endpoints.meta.indexes
+func (c *MetaService) Indexes() ([]IndexType, error) {
 	var indexTypes []IndexType
-
-	err := c.get("meta/indexes", nil, &indexTypes)
+	err := c.client.get("meta/indexes", nil, &indexTypes)
 	if err != nil {
 		return nil, err
 	}
-	return &indexTypes, nil
+	return indexTypes, nil
 }
 
-// GetMeasurementTypes returns list of all the measurement types supported
+// Measurements return a list of all the measurement types supported
 // in the API along with their names and units.
-func (c *Client) GetMeasurementTypes() (*[]MeasurementType, error) {
+// https://developer.airly.eu/docs#endpoints.meta.measurements
+func (c *MetaService) Measurements() ([]MeasurementType, error) {
 	var measurementTypes []MeasurementType
-
-	err := c.get("meta/measurements", nil, &measurementTypes)
+	err := c.client.get("meta/measurements", nil, &measurementTypes)
 	if err != nil {
 		return nil, err
 	}
 
-	return &measurementTypes, nil
+	return measurementTypes, nil
 }
