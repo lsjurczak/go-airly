@@ -6,18 +6,23 @@ import (
 	"time"
 )
 
+// MeasurementService is used to measurement operations.
 // https://developer.airly.eu/docs#endpoints.measurements
 type MeasurementService struct {
 	client *Client
 }
 
+// https://developer.airly.eu/docs#concepts.indexes
 type indexType string
 
 const (
-	// https://developer.airly.eu/docs#concepts.indexes
+	// AirlyCAQI is an Airly quality index.
+	// https://developer.airly.eu/docs#concepts.indexes.airlycaqi
 	AirlyCAQI indexType = "AIRLY_CAQI"
-	CAQI                = "CAQI"
-	PIJP                = "PIJP"
+	// CAQI is an European air quality index.
+	CAQI indexType = "CAQI"
+	// PIJP is a Polish air quality index.
+	PIJP indexType = "PIJP"
 )
 
 // Value represents the name of the measurement (e.g., PM2.5)
@@ -84,6 +89,7 @@ type byIDMeasurementOpts struct {
 	opts url.Values
 }
 
+// NewByIDMeasurementOpts is an opts builder for the installation id measurement query.
 func NewByIDMeasurementOpts(id int64) *byIDMeasurementOpts {
 	q := &byIDMeasurementOpts{opts: map[string][]string{}}
 	q.opts.Set("installationId", fmt.Sprint(id))
@@ -109,6 +115,7 @@ type nearestMeasurementOpts struct {
 	opts url.Values
 }
 
+// NewNearestMeasurementOpts is an opts builder for the nearest measurement query.
 func NewNearestMeasurementOpts(lat, lng float64) *nearestMeasurementOpts {
 	q := &nearestMeasurementOpts{opts: map[string][]string{}}
 	q.opts.Set("lat", fmt.Sprint(lat))
@@ -140,6 +147,7 @@ type forPointMeasurementOpts struct {
 	opts url.Values
 }
 
+// NewForPointMeasurementOpts is an opts builder for the point measurement query.
 func NewForPointMeasurementOpts(lat, lng float64) *forPointMeasurementOpts {
 	q := &forPointMeasurementOpts{opts: map[string][]string{}}
 	q.opts.Set("lat", fmt.Sprint(lat))

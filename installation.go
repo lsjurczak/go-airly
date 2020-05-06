@@ -5,6 +5,7 @@ import (
 	"net/url"
 )
 
+// InstallationService is used to installation operations.
 // https://developer.airly.eu/docs#endpoints.installations
 type InstallationService struct {
 	client *Client
@@ -36,7 +37,7 @@ type Sponsor struct {
 
 // Installation is an entity that binds information about sensor installation.
 type Installation struct {
-	ID        int      `json:"id"`
+	ID        int64    `json:"id"`
 	Location  Location `json:"location"`
 	Address   Address  `json:"address"`
 	Elevation float64  `json:"elevation"`
@@ -60,6 +61,7 @@ type nearestInstallationOpts struct {
 	opts url.Values
 }
 
+// NewNearestInstallationOpts is an opts builder for the nearest installation query.
 func NewNearestInstallationOpts(lat, lng float64) *nearestInstallationOpts {
 	q := &nearestInstallationOpts{opts: map[string][]string{}}
 	q.opts.Set("lat", fmt.Sprint(lat))

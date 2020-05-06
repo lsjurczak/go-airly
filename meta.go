@@ -1,5 +1,6 @@
 package airly
 
+// MetaService is used to meta operations.
 // https://developer.airly.eu/docs#endpoints.meta
 type MetaService struct {
 	client *Client

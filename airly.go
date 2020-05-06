@@ -60,6 +60,8 @@ func NewClient(client HTTPDoer, apiKey string) (*Client, error) {
 	return c, nil
 }
 
+// Language is used to set a different language for textual content returned by Airly API.
+// https://developer.airly.eu/docs#general.language
 func (c *Client) Language(lang string) *Client {
 	c.language = lang
 	return c
@@ -69,7 +71,7 @@ func (c *Client) Language(lang string) *Client {
 type Violation struct {
 	Parameter     string `json:"parameter"`
 	Message       string `json:"message"`
-	RejectedValue int    `json:"rejectedValue"`
+	RejectedValue int64  `json:"rejectedValue"`
 }
 
 // Details represent a list of violations when interacting with the Airly API.
