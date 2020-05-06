@@ -19,7 +19,7 @@ const (
 	// AirlyCAQI is an Airly quality index.
 	// https://developer.airly.eu/docs#concepts.indexes.airlycaqi
 	AirlyCAQI indexType = "AIRLY_CAQI"
-	// CAQI is an European air quality index.
+	// CAQI is a European air quality index.
 	CAQI indexType = "CAQI"
 	// PIJP is a Polish air quality index.
 	PIJP indexType = "PIJP"
