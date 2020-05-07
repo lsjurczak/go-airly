@@ -46,28 +46,28 @@ func TestMetaService_Measurements(t *testing.T) {
 var (
 	mockIndexesResponse = `
 	[
-    	{
+		{
 			"name":"AIRLY_CAQI",
 			"levels":[
 				{
-					"minValue": 0,
-					"maxValue": 25.0,
-					"values": "0-25",
-					"level": "VERY_LOW",
-					"description": "Very Low",
-					"color": "#6BC926"
+					"minValue":0,
+					"maxValue":25.0,
+					"values":"0-25",
+					"level":"VERY_LOW",
+					"description":"Very Low",
+					"color":"#6BC926"
 				}
-        	]
-    	}
+			]
+		}
 	]
 `
 	mockMeasurementsResponse = `
 	[
-    	{
-        	"name": "PM1",
-        	"label": "PM1",
-        	"unit": "µg/m³"
-    	}
+		{
+			"name":"PM1",
+			"label":"PM1",
+			"unit":"µg/m³"
+		}
 	]
 `
 )

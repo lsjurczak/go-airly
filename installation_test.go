@@ -48,28 +48,28 @@ func TestInstallationService_Nearest(t *testing.T) {
 var (
 	mockInstallationResponse = `
 	{
-		"id": 9599,
-		"location": {
-			"latitude": 52.287217,
-			"longitude": 21.108757
+		"id":9599,
+		"location":{
+			"latitude":52.287217,
+			"longitude":21.108757
 		},
-		"address": {
-			"country": "Poland",
-			"city": "Ząbki",
-			"street": "Piłsudskiego",
-			"number": "35",
-			"displayAddress1": "Ząbki",
-			"displayAddress2": "Piłsudskiego"
+		"address":{
+			"country":"Poland",
+			"city":"Ząbki",
+			"street":"Piłsudskiego",
+			"number":"35",
+			"displayAddress1":"Ząbki",
+			"displayAddress2":"Piłsudskiego"
 		},
-		"elevation": 85.02,
-		"airly": true,
-		"sponsor": {
-			"id": 371,
-			"name": "Powiat Wołomiński",
-			"description": "Airly Sensor's sponsor",
-			"logo": "https://cdn.airly.eu/logo/logo.jpg",
-			"link": null,
-			"displayName": null
+		"elevation":85.02,
+		"airly":true,
+		"sponsor":{
+			"id":371,
+			"name":"Powiat Wołomiński",
+			"description":"Airly Sensor's sponsor",
+			"logo":"https://cdn.airly.eu/logo/logo.jpg",
+			"link":null,
+			"displayName":null
 		}
 	}
 `
