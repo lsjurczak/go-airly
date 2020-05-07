@@ -16,7 +16,7 @@ type Level struct {
 	Color       string  `json:"color"`
 }
 
-// IndexType represents an air quality type.
+// SetIndexType represents an air quality type.
 type IndexType struct {
 	Name   string  `json:"name"`
 	Levels []Level `json:"levels"`
@@ -50,6 +50,5 @@ func (c *MetaService) Measurements() ([]MeasurementType, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return measurementTypes, nil
 }

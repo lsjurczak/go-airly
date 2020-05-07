@@ -2,7 +2,6 @@ package airly
 
 import (
 	"fmt"
-	"net/url"
 )
 
 // InstallationService is used to installation operations.
@@ -11,7 +10,7 @@ type InstallationService struct {
 	client *Client
 }
 
-// Location represents the geographical coordinates of sensor installation.
+// SetLocation represents the geographical coordinates of sensor installation.
 type Location struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
@@ -58,24 +57,23 @@ func (s *InstallationService) ByID(id int64) (Installation, error) {
 }
 
 type nearestInstallationOpts struct {
-	opts url.Values
+	*urlQuery
 }
 
 // NewNearestInstallationOpts is an opts builder for the nearest installation query.
 func NewNearestInstallationOpts(lat, lng float64) *nearestInstallationOpts {
-	q := &nearestInstallationOpts{opts: map[string][]string{}}
-	q.opts.Set("lat", fmt.Sprint(lat))
-	q.opts.Set("lng", fmt.Sprint(lng))
-	return q
+	return &nearestInstallationOpts{
+		NewURLQuery().SetLocation(lat, lng),
+	}
 }
 
 func (q *nearestInstallationOpts) MaxDistance(km float64) *nearestInstallationOpts {
-	q.opts.Set("maxDistanceKM", fmt.Sprint(km))
+	q.SetMaxDistance(km)
 	return q
 }
 
 func (q *nearestInstallationOpts) MaxResults(limit float64) *nearestInstallationOpts {
-	q.opts.Set("maxResults", fmt.Sprint(limit))
+	q.SetMaxResults(limit)
 	return q
 }
 

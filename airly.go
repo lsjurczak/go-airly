@@ -109,6 +109,43 @@ func (c *Client) decodeError(resp *http.Response) error {
 	return e
 }
 
+type urlQuery struct {
+	opts url.Values
+}
+
+// NewURLQuery creates new query params builder.
+func NewURLQuery() *urlQuery {
+	return &urlQuery{
+		opts: map[string][]string{},
+	}
+}
+
+func (q *urlQuery) SetLocation(lat, lng float64) *urlQuery {
+	q.opts.Set("lat", fmt.Sprint(lat))
+	q.opts.Set("lng", fmt.Sprint(lng))
+	return q
+}
+
+func (q *urlQuery) SetInstallationID(id int64) *urlQuery {
+	q.opts.Set("installationId", fmt.Sprint(id))
+	return q
+}
+
+func (q *urlQuery) SetMaxDistance(km float64) *urlQuery {
+	q.opts.Set("maxDistanceKM", fmt.Sprint(km))
+	return q
+}
+
+func (q *urlQuery) SetMaxResults(limit float64) *urlQuery {
+	q.opts.Set("maxResults", fmt.Sprint(limit))
+	return q
+}
+
+func (q *urlQuery) SetIndexType(index indexType) *urlQuery {
+	q.opts.Set("indexType", string(index))
+	return q
+}
+
 func (c *Client) get(path string, params url.Values, result interface{}) error {
 	u := c.baseURL.ResolveReference(
 		&url.URL{

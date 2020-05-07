@@ -1,8 +1,6 @@
 package airly
 
 import (
-	"fmt"
-	"net/url"
 	"time"
 )
 
@@ -26,7 +24,7 @@ const (
 )
 
 // Value represents the name of the measurement (e.g., PM2.5)
-// and measured value (e.g., concentration 60µg/m³)
+// and measured value (e.g., concentration 60µg/m³).
 type Value struct {
 	Name  string  `json:"name"`
 	Value float64 `json:"value"`
@@ -86,18 +84,18 @@ type Measurement struct {
 }
 
 type byIDMeasurementOpts struct {
-	opts url.Values
+	*urlQuery
 }
 
 // NewByIDMeasurementOpts is an opts builder for the installation id measurement query.
 func NewByIDMeasurementOpts(id int64) *byIDMeasurementOpts {
-	q := &byIDMeasurementOpts{opts: map[string][]string{}}
-	q.opts.Set("installationId", fmt.Sprint(id))
-	return q
+	return &byIDMeasurementOpts{
+		NewURLQuery().SetInstallationID(id),
+	}
 }
 
 func (q *byIDMeasurementOpts) IndexType(index indexType) *byIDMeasurementOpts {
-	q.opts.Set("indexType", string(index))
+	q.SetIndexType(index)
 	return q
 }
 
@@ -112,24 +110,23 @@ func (c *MeasurementService) ByID(opts *byIDMeasurementOpts) (Measurement, error
 }
 
 type nearestMeasurementOpts struct {
-	opts url.Values
+	*urlQuery
 }
 
 // NewNearestMeasurementOpts is an opts builder for the nearest measurement query.
 func NewNearestMeasurementOpts(lat, lng float64) *nearestMeasurementOpts {
-	q := &nearestMeasurementOpts{opts: map[string][]string{}}
-	q.opts.Set("lat", fmt.Sprint(lat))
-	q.opts.Set("lng", fmt.Sprint(lng))
-	return q
+	return &nearestMeasurementOpts{
+		NewURLQuery().SetLocation(lat, lng),
+	}
 }
 
 func (q *nearestMeasurementOpts) MaxDistance(km float64) *nearestMeasurementOpts {
-	q.opts.Set("maxDistanceKM", fmt.Sprint(km))
+	q.SetMaxDistance(km)
 	return q
 }
 
 func (q *nearestMeasurementOpts) IndexType(index indexType) *nearestMeasurementOpts {
-	q.opts.Set("indexType", string(index))
+	q.SetIndexType(index)
 	return q
 }
 
@@ -144,19 +141,18 @@ func (c *MeasurementService) Nearest(opts *nearestMeasurementOpts) (Measurement,
 }
 
 type forPointMeasurementOpts struct {
-	opts url.Values
+	*urlQuery
 }
 
 // NewForPointMeasurementOpts is an opts builder for the point measurement query.
 func NewForPointMeasurementOpts(lat, lng float64) *forPointMeasurementOpts {
-	q := &forPointMeasurementOpts{opts: map[string][]string{}}
-	q.opts.Set("lat", fmt.Sprint(lat))
-	q.opts.Set("lng", fmt.Sprint(lng))
-	return q
+	return &forPointMeasurementOpts{
+		NewURLQuery().SetLocation(lat, lng),
+	}
 }
 
 func (q *forPointMeasurementOpts) IndexType(index indexType) *forPointMeasurementOpts {
-	q.opts.Set("indexType", string(index))
+	q.SetIndexType(index)
 	return q
 }
 
