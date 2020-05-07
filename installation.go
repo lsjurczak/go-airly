@@ -10,7 +10,7 @@ type InstallationService struct {
 	client *Client
 }
 
-// SetLocation represents the geographical coordinates of sensor installation.
+// Location represents the geographical coordinates of sensor installation.
 type Location struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`

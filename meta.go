@@ -16,7 +16,7 @@ type Level struct {
 	Color       string  `json:"color"`
 }
 
-// SetIndexType represents an air quality type.
+// IndexType represents an air quality type.
 type IndexType struct {
 	Name   string  `json:"name"`
 	Levels []Level `json:"levels"`
