@@ -28,7 +28,7 @@ Construct a new client and pass apiKey:
 ```go
 client, err := airly.NewClient(nil, "apiKey")
 if err != nil {
-	log.Fatalf("airly.NewClient: %v", err)
+    log.Fatalf("airly.NewClient: %v", err)
 }
 ```
 
@@ -46,7 +46,7 @@ For example, to get the nearest installation:
 opt := airly.NewNearestInstallationOpts(52.2872, 21.1087.
     MaxResults(1).
     MaxDistance(10)
-installation, err := client.Installation.Nearest(otp)
+installation, err := client.Installation.Nearest(opt)
 if err != nil {
     log.Fatal(err)
 }
