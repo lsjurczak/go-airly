@@ -28,10 +28,12 @@ type Address struct {
 
 // Sponsor represents the sponsor who bought the sensor.
 type Sponsor struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Logo        string `json:"logo"`
-	Link        string `json:"link"`
+	ID          int64   `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Logo        string  `json:"logo"`
+	Link        *string `json:"link"`
+	DisplayName *string `json:"displayName"`
 }
 
 // Installation is an entity that binds information about sensor installation.

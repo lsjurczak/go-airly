@@ -46,6 +46,7 @@ type Standard struct {
 	Pollutant string  `json:"pollutant"`
 	Limit     float64 `json:"limit"`
 	Percent   float64 `json:"percent"`
+	Averaging string  `json:"averaging"`
 }
 
 // Current represents current measurement data.
