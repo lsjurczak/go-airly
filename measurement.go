@@ -101,6 +101,7 @@ func (q *byIDMeasurementOpts) IndexType(index indexType) *byIDMeasurementOpts {
 }
 
 // ByID returns measurements for concrete installation given by installationID.
+// https://developer.airly.eu/docs#endpoints.measurements.installation
 func (c *MeasurementService) ByID(opts *byIDMeasurementOpts) (Measurement, error) {
 	var measurement Measurement
 	err := c.client.get("measurements/installation", opts.opts, &measurement)
@@ -132,6 +133,7 @@ func (q *nearestMeasurementOpts) IndexType(index indexType) *nearestMeasurementO
 }
 
 // Nearest returns measurement for an installation closest to a given location.
+// https://developer.airly.eu/docs#endpoints.measurements.nearest
 func (c *MeasurementService) Nearest(opts *nearestMeasurementOpts) (Measurement, error) {
 	var measurement Measurement
 	err := c.client.get("measurements/nearest", opts.opts, &measurement)
@@ -158,6 +160,7 @@ func (q *forPointMeasurementOpts) IndexType(index indexType) *forPointMeasuremen
 }
 
 // ForPoint returns measurements for any geographical location.
+// https://developer.airly.eu/docs#endpoints.measurements.point
 func (c *MeasurementService) ForPoint(opts *forPointMeasurementOpts) (Measurement, error) {
 	var measurement Measurement
 	err := c.client.get("measurements/point", opts.opts, &measurement)

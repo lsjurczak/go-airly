@@ -1,6 +1,6 @@
 go-airly
 =======
-![Test](https://github.com/lsjurczak/go-airly/workflows/Test/badge.svg?branch=master)
+[![Test](https://github.com/lsjurczak/go-airly/workflows/Test/badge.svg?branch=master)](https://github.com/lsjurczak/go-airly/actions?query=workflow%3ATest)
 [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/lsjurczak/go-airly?)
 [![Go Report Card](https://goreportcard.com/badge/github.com/lsjurczak/go-airly)](https://goreportcard.com/report/github.com/lsjurczak/go-airly)
 
@@ -43,7 +43,7 @@ different Airly API methods.
 For example, to get the nearest installation:
 
 ```go
-opt := airly.NewNearestInstallationOpts(52.2872, 21.1087.
+opt := airly.NewNearestInstallationOpts(52.2872, 21.1087).
     MaxResults(1).
     MaxDistance(10)
 installation, err := client.Installation.Nearest(opt)
