@@ -65,17 +65,17 @@ type nearestInstallationOpts struct {
 // NewNearestInstallationOpts is an opts builder for the nearest installation query.
 func NewNearestInstallationOpts(lat, lng float64) *nearestInstallationOpts {
 	return &nearestInstallationOpts{
-		NewURLQuery().SetLocation(lat, lng),
+		NewURLQuery().setLocation(lat, lng),
 	}
 }
 
 func (q *nearestInstallationOpts) MaxDistance(km float64) *nearestInstallationOpts {
-	q.SetMaxDistance(km)
+	q.setMaxDistance(km)
 	return q
 }
 
 func (q *nearestInstallationOpts) MaxResults(limit float64) *nearestInstallationOpts {
-	q.SetMaxResults(limit)
+	q.setMaxResults(limit)
 	return q
 }
 

@@ -165,7 +165,7 @@ var mockMeasurementResponse = `
 `
 
 var mockMeasurement = Measurement{
-	Current: Current{
+	Current: Data{
 		FromDateTime: time.Date(2020, 5, 7, 14, 0, 0, 0, time.UTC),
 		TillDateTime: time.Date(2020, 5, 7, 15, 0, 0, 0, time.UTC),
 		Values: []Value{
@@ -194,7 +194,7 @@ var mockMeasurement = Measurement{
 			},
 		},
 	},
-	History: []History{
+	History: []Data{
 		{
 			FromDateTime: time.Date(2020, 5, 6, 15, 0, 0, 0, time.UTC),
 			TillDateTime: time.Date(2020, 5, 6, 16, 0, 0, 0, time.UTC),
@@ -225,7 +225,7 @@ var mockMeasurement = Measurement{
 			},
 		},
 	},
-	Forecast: []Forecast{
+	Forecast: []Data{
 		{
 			FromDateTime: time.Date(2020, 5, 7, 15, 0, 0, 0, time.UTC),
 			TillDateTime: time.Date(2020, 5, 7, 16, 0, 0, 0, time.UTC),

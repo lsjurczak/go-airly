@@ -49,26 +49,8 @@ type Standard struct {
 	Averaging string  `json:"averaging"`
 }
 
-// Current represents current measurement data.
-type Current struct {
-	FromDateTime time.Time  `json:"fromDateTime"`
-	TillDateTime time.Time  `json:"tillDateTime"`
-	Values       []Value    `json:"values"`
-	Indexes      []Index    `json:"indexes"`
-	Standards    []Standard `json:"standards"`
-}
-
-// History represents a historical measurement data.
-type History struct {
-	FromDateTime time.Time  `json:"fromDateTime"`
-	TillDateTime time.Time  `json:"tillDateTime"`
-	Values       []Value    `json:"values"`
-	Indexes      []Index    `json:"indexes"`
-	Standards    []Standard `json:"standards"`
-}
-
-// Forecast represents a measurement forecast.
-type Forecast struct {
+// Data represents measurement data.
+type Data struct {
 	FromDateTime time.Time  `json:"fromDateTime"`
 	TillDateTime time.Time  `json:"tillDateTime"`
 	Values       []Value    `json:"values"`
@@ -79,9 +61,9 @@ type Forecast struct {
 // Measurement is a response format that contains measurements
 // from a particular installation or area.
 type Measurement struct {
-	Current  Current    `json:"current"`
-	History  []History  `json:"history"`
-	Forecast []Forecast `json:"forecast"`
+	Current  Data   `json:"current"`
+	History  []Data `json:"history"`
+	Forecast []Data `json:"forecast"`
 }
 
 type byIDMeasurementOpts struct {
@@ -91,12 +73,17 @@ type byIDMeasurementOpts struct {
 // NewByIDMeasurementOpts is an opts builder for the installation id measurement query.
 func NewByIDMeasurementOpts(id int64) *byIDMeasurementOpts {
 	return &byIDMeasurementOpts{
-		NewURLQuery().SetInstallationID(id),
+		NewURLQuery().setInstallationID(id),
 	}
 }
 
+func (q *byIDMeasurementOpts) IncludeWind(wind bool) *byIDMeasurementOpts {
+	q.setIncludeWind(wind)
+	return q
+}
+
 func (q *byIDMeasurementOpts) IndexType(index indexType) *byIDMeasurementOpts {
-	q.SetIndexType(index)
+	q.setIndexType(index)
 	return q
 }
 
@@ -118,17 +105,17 @@ type nearestMeasurementOpts struct {
 // NewNearestMeasurementOpts is an opts builder for the nearest measurement query.
 func NewNearestMeasurementOpts(lat, lng float64) *nearestMeasurementOpts {
 	return &nearestMeasurementOpts{
-		NewURLQuery().SetLocation(lat, lng),
+		NewURLQuery().setLocation(lat, lng),
 	}
 }
 
 func (q *nearestMeasurementOpts) MaxDistance(km float64) *nearestMeasurementOpts {
-	q.SetMaxDistance(km)
+	q.setMaxDistance(km)
 	return q
 }
 
 func (q *nearestMeasurementOpts) IndexType(index indexType) *nearestMeasurementOpts {
-	q.SetIndexType(index)
+	q.setIndexType(index)
 	return q
 }
 
@@ -150,12 +137,12 @@ type forPointMeasurementOpts struct {
 // NewForPointMeasurementOpts is an opts builder for the point measurement query.
 func NewForPointMeasurementOpts(lat, lng float64) *forPointMeasurementOpts {
 	return &forPointMeasurementOpts{
-		NewURLQuery().SetLocation(lat, lng),
+		NewURLQuery().setLocation(lat, lng),
 	}
 }
 
 func (q *forPointMeasurementOpts) IndexType(index indexType) *forPointMeasurementOpts {
-	q.SetIndexType(index)
+	q.setIndexType(index)
 	return q
 }
 

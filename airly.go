@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -120,28 +121,33 @@ func NewURLQuery() *urlQuery {
 	}
 }
 
-func (q *urlQuery) SetLocation(lat, lng float64) *urlQuery {
+func (q *urlQuery) setLocation(lat, lng float64) *urlQuery {
 	q.opts.Set("lat", fmt.Sprint(lat))
 	q.opts.Set("lng", fmt.Sprint(lng))
 	return q
 }
 
-func (q *urlQuery) SetInstallationID(id int64) *urlQuery {
+func (q *urlQuery) setInstallationID(id int64) *urlQuery {
 	q.opts.Set("installationId", fmt.Sprint(id))
 	return q
 }
 
-func (q *urlQuery) SetMaxDistance(km float64) *urlQuery {
+func (q *urlQuery) setMaxDistance(km float64) *urlQuery {
 	q.opts.Set("maxDistanceKM", fmt.Sprint(km))
 	return q
 }
 
-func (q *urlQuery) SetMaxResults(limit float64) *urlQuery {
+func (q *urlQuery) setMaxResults(limit float64) *urlQuery {
 	q.opts.Set("maxResults", fmt.Sprint(limit))
 	return q
 }
 
-func (q *urlQuery) SetIndexType(index indexType) *urlQuery {
+func (q *urlQuery) setIncludeWind(wind bool) *urlQuery {
+	q.opts.Set("includeWind", strconv.FormatBool(wind))
+	return q
+}
+
+func (q *urlQuery) setIndexType(index indexType) *urlQuery {
 	q.opts.Set("indexType", string(index))
 	return q
 }
